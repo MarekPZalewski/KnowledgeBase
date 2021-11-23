@@ -1,7 +1,12 @@
 //DESCRIPTION//
-Simple pipeline that generates table with list of users, assigned license in ADO organization (see: az devops user list --query "")
+Simple pipeline that generates table with list of users, assigned licenses and last access date in ADO organization (see: az devops user list --query "")
 it saves it to file and commits to specified ADO repository (Build Service permissions is used)
 CSV file is saved in time stamp with monthly schedule, so history can be tracked if needed. Also users with lower permissions can execute it on demand if needed. (simply run pipeline)
+
+//USAGE//
+To download exported list, go to proper repository and download file. Which is in  Project -> Repositories ->  Repo -> UsersReport folder
+
+to run on demand go to pipeline and demand. Project -> Pipelines -> Pipelines -> Azure DevOps Licenses Report -> More Options on pipeline and "run pipeline"
 
 
 //PROCEDURE//
