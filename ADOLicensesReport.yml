@@ -1,0 +1,28 @@
+trigger: none
+schedules:
+  - cron: "0 6 1 * *"
+    displayName: "Every 1st of month at 6AM"
+    always: true
+    branches:
+      include:
+        - main
+jobs:
+- job: Job_1
+  displayName: Agent job 1
+  pool:
+    vmImage: windows-latest
+  steps:
+  - checkout: self
+    clean: true
+    persistCredentials: True
+  - task: PowerShell@2
+    displayName: Get Users
+    inputs:
+      targetType: inline
+      script: "$foldername = \"UsersReport\"\n$filename = (\"DevOpsUsers\" + (get-date -f yyyyMMdd-HHmmss) + \".csv\")\n\nif(!(test-path .\\$foldername)){new-item .\\$foldername -ItemType Directory}\nset-location .\\$foldername\n\n\naz devops configure --defaults organization=https://dev.azure.com/ORGANIZATION/\naz devops user list --query \"items[].{UPN:user.principalName, License:accessLevel.licenseDisplayName, LastAccess:lastAccessedDate}\" -o tsv  | out-file .\\$filename \n#write-host $users"
+    env:
+      AZURE_DEVOPS_EXT_PAT: $(token)
+  - task: CmdLine@2
+    displayName: Command Line Script
+    inputs:
+      script: "git config --global user.email CloudMember@foo.com\ngit config --global user.name AzureCloudTeam\n\necho \"ls\"\nls\necho \"git status\"\ngit status\necho \"git show\"\ngit show\necho \"git branch\"\ngit branch\necho \"git add .\"\ngit add .\ngit commit -m \"Scheduled Report Commit\" \necho \"git push\"\ngit push https://$(System.AccessToken)@dev.azure.com/ORGANIZATION/PROJECT/_git/Azure%%20Team%%20Reports HEAD:main -q\n"

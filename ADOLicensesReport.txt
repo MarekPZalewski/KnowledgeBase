@@ -1,0 +1,20 @@
+//DESCRIPTION//
+Simple pipeline that generates table with list of users, assigned license in ADO organization (see: az devops user list --query "")
+it saves it to file and commits to specified ADO repository (Build Service permissions is used)
+CSV file is saved in time stamp with monthly schedule, so history can be tracked if needed. Also users with lower permissions can execute it on demand if needed. (simply run pipeline)
+
+
+//PROCEDURE//
+Generate PAT in Azure DevOps with permissions to Read users over organization
+Create yaml pipeline with provided code
+Create secured variable named "token" with value of PAT
+Create respository, add permission for Project Collection Build Service (ORG) to contribute/create branches/tags - whatever is desired
+
+
+//TROUBLESHOOTING//
+In case secured variable is changed / displayed and saved, you need to reenter PAT value. anyone with permissions to create PAT can do it
+
+
+//OTHER//
+as no az login / az devops login is executed, service will try to use token from AZURE_DEVOPS_EXT_PAT environment variable, which is overwriten with our "token" variable.
+Using secured variable directly as piped into az devops login will fail because of the way it's stored. It would probably work when provided as plain text, but we don't want it.
